@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.UserAddressMapper">
+	<select id="getUserAddress"
+		parameterType="com.cappuccino.pojo.UserInfo"
+		resultType="com.cappuccino.pojo.UserAddress">
+		select * from useraddress where userId = #{userId}
+	</select>
+	<insert id="addUserAddress" parameterType="com.cappuccino.pojo.UserAddress">
+		insert into useraddress(address,phone,consignee,userId)
+		values(#{address},#{phone},#{consignee},#{userId})
+	</insert>
+</mapper>

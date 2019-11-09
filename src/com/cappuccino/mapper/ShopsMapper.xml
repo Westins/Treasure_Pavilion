@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.ShopsMapper">
+	<resultMap type="com.cappuccino.pojo.Shops" id="ShopsMapper">
+		<id column="shopsId" property="shopsId" />
+		<result column="shopsSalesVolume" property="shopsSalesVolume" />
+		<result column="shopsName" property="shopsName" />
+		<result column="shopsLogo" property="shopsLogo" />
+		<result column="shopsImgIntroduce" property="shopsImgIntroduce" />
+		<result column="shopsVideoIntroduce"
+			property="shopsVideoIntroduce" />
+		<result column="shopsSales" property="shopsSales" />
+		<result column="shopsTextIntroduce"
+			property="shopsTextIntroduce" />
+		<collection property="goods" select="getGoodsInfoByShopsId"
+			ofType="com.cappuccino.pojo.Goods" column="shopsId"></collection>
+		<collection property="userinfo"
+			select="getUserInfoByUserId" ofType="com.cappuccino.pojo.UserInfo"
+			column="UserId"></collection>
+		<!-- 欧武淼 GO -->
+		<collection property="goods"
+			ofType="com.cappuccino.pojo.Goods" select="SelGoodsByShopsId"
+			column="ShopsId" />
+		<!-- 欧武淼 END -->
+	</resultMap>
+	<!-- 欧武淼 GO -->
+	<resultMap type="com.cappuccino.pojo.Goods" id="GoodsMap">
+		<id column="GoodsId" property="goodsId" />
+		<result column="GoodsName" property="goodsName" />
+		<result column="GoodsImg" property="goodsImg" />
+		<result column="GoodsImgIntroduce" property="goodsImgIntroduce" />
+		<result column="GoodsVideoIntroduce"
+			property="goodsVideoIntroduce" />
+		<result column="GoodsTestIntroduce"
+			property="goodsTestIntroduce" />
+		<result column="GoodsOriginalPrice"
+			property="goodsOriginalPrice" />
+		<result column="GoodsDiscount" property="goodsDiscount" />
+		<result column="GoodsTypeId" property="goodsTypeId" />
+		<result column="GoodsSalesVolume" property="goodsSalesVolume" />
+		<result column="ShopsId" property="shopsId" />
+		<result column="GoodsModel" property="goodsModel" />
+		<result column="GoodsTime" property="goodsTime" />
+		<result column="GoodsState" property="goodsState" />
+	</resultMap>
+	<!-- 欧武淼 END -->
+
+	<select id="getAllShopsInfo" resultMap="ShopsMapper">
+		select * from Shops where ShopState=1 and 1=1
+		<if test="ShopsName != null">
+			and ShopsName like '%${ShopsName}%'
+		</if>
+		<if test="ShopsTime == 'yes'">
+			ORDER BY ShopsTime desc
+		</if>
+	</select>
+	<select id="getGoodsInfoByShopsId" parameterType="int"
+		resultType="com.cappuccino.pojo.Goods">
+		select * from Goods,shops where GoodsState in(1,3) and
+		goods.ShopsId = shops.ShopsId and shops.ShopState =1 and Goods.shopsId
+		= #{shopsId}
+	</select>
+	<select id="getUserInfoByUserId" parameterType="int"
+		resultType="com.cappuccino.pojo.UserInfo">
+		select * from UserInfo where UserId = #{UserId}
+	</select>
+	<select id="selectShopsByShopsId" parameterType="int"
+		resultMap="ShopsMapper">
+		select * from shops where shopsId=#{shopsId}
+	</select>
+	
+	<update id="updateShopsByShopsId" parameterType="map">
+		update shops set
+		ShopsSalesVolume=#{shopsSalesVolume},ShopsSales=#{shopsSales} where
+		shopsId=#{shopsId}
+	</update>
+	<select id="selShopsByNameOrVolume" parameterType="map" resultMap="ShopsMapper">
+	 select * from Shops where ShopState=1
+	 <if test="shopsName != null">
+	 and shops.ShopsName like '%${shopsName}%'
+	 </if>
+	 <if test="ByVolume == 'yes'"> <!-- 低到高 升序 -->
+	 order by shops.ShopsSalesVolume
+	 </if>
+	  <if test="ByVolume == 'no'"> <!-- 高到低 降序 -->
+	 order by shops.ShopsSalesVolume desc
+	 </if>
+	</select>
+	<!-- 欧武淼 GO -->
+	<select id="SelGoodsByShopsId" parameterType="String"
+		resultMap="GoodsMap">
+		select * from goods where ShopsId=#{shopsId}
+	</select>
+	
+	<select id="ShowShopGoods" parameterType="String"
+		resultMap="ShopsMapper">
+		select * from shops where ShopsId=#{shopsId}
+	</select>
+
+	<insert id="AddShops" parameterType="com.cappuccino.pojo.Shops">
+		insert into
+		shops(ShopsName,ShopsLogo,ShopsTextIntroduce,ShopsVideoIntroduce,ShopsTime,UserId,ShopState)
+		values(#{shopsName},#{shopsLogo},#{shopsTextIntroduce},#{shopsVideoIntroduce},#{shopsTime},#{userId},#{shopState})
+	</insert>
+	<!-- 欧武淼 END -->
+
+</mapper>

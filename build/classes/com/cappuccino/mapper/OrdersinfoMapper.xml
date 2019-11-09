@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.OrdersinfoMapper">
+	<resultMap type="com.cappuccino.pojo.Ordersinfo"
+		id="orderInfoMapper">
+		<id column="ordersInfoId" property="ordersInfoId" />
+		<result column="ordersInfoNo" property="ordersInfoNo" />
+		<result column="goodsId" property="goodsId" />
+		<result column="userId" property="userId" />
+		<result column="ordersInfoNum" property="ordersInfoNum" />
+		<result column="ordersInfoModel" property="ordersInfoModel" />
+		<result column="ordersInfoState" property="ordersInfoState" />
+		<result column="OrdersInfoPrice" property="ordersInfoPrice" />
+		<result column="ordersAddress" property="ordersAddress" />
+		<result column="ordersPhone" property="ordersPhone" />
+		<result column="ordersConsignee" property="ordersConsignee" />
+		<result column="ordersSongPrice" property="ordersSongPrice" />
+		<collection property="goods" select="gerGoodsInfoByOrder"
+			ofType="com.cappuccino.pojo.Goods" column="goodsId"></collection>
+		<collection property="user" select="getUser"
+			ofType="com.cappuccino.pojo.UserInfo" column="userId"></collection>
+	</resultMap>
+	<insert id="addOrderInfo"
+		parameterType="com.cappuccino.pojo.Ordersinfo">
+		insert into
+		ordersinfo(OrdersInfoNo,GoodsId,OrdersInfoNum,OrdersInfoModel,UserId,OrdersInfoState,OrdersInfoPrice,OrdersInfoTime,ordersAddress,ordersPhone,ordersConsignee)
+		values(#{ordersInfoNo},#{goodsId},#{ordersInfoNum},#{ordersInfoModel},#{userId},#{ordersInfoState},#{ordersInfoPrice},#{ordersInfoTime},#{ordersAddress},#{ordersPhone},#{ordersConsignee})
+	</insert>
+	<select id="getOrderInfoByUserId" parameterType="int"
+		resultMap="orderInfoMapper">
+		select * from ordersinfo where UserId = #{userId}
+	</select>
+	<select id="gerGoodsInfoByOrder" parameterType="int"
+		resultType="com.cappuccino.pojo.Goods">
+		select * from goods where goodsId = #{goodsId}
+	</select>
+	<select id="getOrdersinfoByOrdersinfoId"
+		resultMap="orderInfoMapper">
+		select * from ordersinfo where ordersInfoId =
+		#{ordersInfoId} and userId =
+		#{userId}
+	</select>
+	<select id="selOrderByOderId" parameterType="int"
+		resultMap="orderInfoMapper">
+		select * from ordersinfo where ordersinfoid = #{orderId}
+	</select>
+	<update id="updateOrdersState" parameterType="int">
+		update ordersinfo
+		set ordersinfostate=0 where ordersinfoid=#{ordersinfoid}
+	</update>
+	<!-- 欧武淼 Go -->
+	<select id="ShowOrderByShops" parameterType="String"
+		resultMap="orderInfoMapper">
+		select * from ordersinfo o,goods g,shops s where s.ShopsId
+		=g.ShopsId and
+		g.GoodsId=o.GoodsId and s.shopsId =#{shopsId}
+	</select>
+	<select id="ShowOrderByShopsState" parameterType="String"
+		resultType="int">
+		select count(o.ordersInfoNo)
+		from ordersinfo o,goods g,shops
+		s where s.ShopsId =g.ShopsId and
+		g.GoodsId=o.GoodsId and s.shopsId
+		=#{shopsId} and o.OrdersInfoState=1
+	</select>
+
+	<update id="UpdateOrderInfoStateByShops" parameterType="String">
+		update
+		ordersinfo set ordersinfostate=2 where
+		ordersinfoid=#{ordersinfoid}
+	</update>
+	<select id="getUser" parameterType="String" resultType="com.cappuccino.pojo.UserInfo">
+	select * from userinfo where userId = #{userId}
+	</select>
+	<!-- 欧武淼 Go -->
+</mapper>

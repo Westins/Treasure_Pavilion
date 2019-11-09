@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.GoodsMapper">
+
+	<resultMap type="com.cappuccino.pojo.Goods" id="GoodsMapper">
+		<id column="goodsId" property="goodsId" />
+		<result column="goodsTypeId" property="goodsTypeId" />
+		<result column="shopsId" property="shopsId" />
+		<result column="goodsSalesVolume" property="goodsSalesVolume" />
+		<result column="goodsName" property="goodsName" />
+		<result column="goodsImgIntroduce" property="goodsImgIntroduce" />
+		<result column="goodsVideoIntroduce"
+			property="goodsVideoIntroduce" />
+		<result column="goodsTestIntroduce"
+			property="goodsTestIntroduce" />
+		<result column="goodsModel" property="goodsModel" />
+		<result column="goodsState" property="goodsState" />
+		<result column="goodsImg" property="goodsImg" />
+		<result column="goodsOriginalPrice"
+			property="goodsOriginalPrice" />
+		<result column="goodsDiscount" property="goodsDiscount" />
+		<result column="goodsTime" property="goodsTime" />
+		<result column="goodsColor" property="goodsColor" />
+		<result column="goodsTypeId" property="goodsTypeId" />
+		<collection property="goodsreview" select="getGoodsReview"
+			column="goodsId">
+		</collection>
+		<collection property="goodstypes" select="getGoodsTypes"
+			ofType="com.cappuccino.pojo.Goodstypes" column="goodsTypeId"></collection>
+	</resultMap>
+	<resultMap type="com.cappuccino.pojo.Goodsreview"
+		id="GoodsreviewMapper">
+		<id column="goodsReviewId" property="goodsReviewId" />
+		<result column="goodsReviewRated" property="goodsReviewRated" />
+		<result column="userId" property="userId" />
+		<result column="goodsId" property="goodsId" />
+		<collection property="userinfo" select="getReviewByUserId"
+			column="userId">
+		</collection>
+	</resultMap>
+	<!-- 根据销量查询商品信息 -->
+	<select id="getGoodsInfoByVolume" resultMap="GoodsMapper">
+		select * from goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and 1=1 order by GoodsSalesVolume
+		<if test="desc == 'yes'">
+			desc
+		</if>
+		<if test="all == 'no'">
+			LIMIT 6
+		</if>
+	</select>
+	<!-- 根据上架时间查询商品信息 -->
+	<select id="getGoodsInfoByGoosTime" resultMap="GoodsMapper">
+		select * from goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and 1=1 order by GoodsTime
+		<if test="desc == 'yes'">
+			desc
+		</if>
+		<if test="all == 'no'">
+			LIMIT 4
+		</if>
+	</select>
+	<!-- 根据折扣查询商品信息 -->
+	<select id="getGoodsInfoByGoodsDiscount" resultMap="GoodsMapper">
+		select * from goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and 1=1
+		<if test="Discount == 'yes'">
+			and GoodsDiscount != 1
+		</if>
+		<if test="Discount == 'no'">
+			and GoodsDiscount = 1
+		</if>
+		<if test="desc == 'yes'">
+			order by GoodsDiscount
+		</if>
+		<if test="all == 'no'">
+			LIMIT 4
+		</if>
+	</select>
+	<select id="getGoodsInfo" resultMap="GoodsMapper">
+		select * from goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and 1=1
+		<if test="GoodsName !=null">
+			and GoodsName LIKE '%${GoodsName}%'
+		</if>
+	</select>
+	<select id="getGoodsReview" parameterType="int"
+		resultMap="GoodsreviewMapper">
+		select * from goodsreview where GoodsId = #{goodsId}
+	</select>
+	<select id="getGoodsTypes" parameterType="int"
+		resultType="com.cappuccino.pojo.Goodstypes">
+		select * from goodstypes where goodstypesId =
+		#{goodsTypeId}
+	</select>
+	<select id="getGoodsInfoByGoodsId" resultMap="GoodsMapper"
+		parameterType="int">
+		select * from goods,shops WHERE GoodsState in(1,3) and
+		goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and GoodsId =
+		#{GoodsId}
+	</select>
+	<select id="getGoodsInfoByGoodsTypes" resultMap="GoodsMapper"
+		parameterType="int">
+		select * from goods,shops WHERE GoodsState in(1,3) and
+		goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and GoodsTypeId =
+		#{GoodsTypeId}
+	</select>
+	<select id="getReviewByUserId"
+		resultType="com.cappuccino.pojo.UserInfo" parameterType="int">
+		select * from
+		UserInfo where UserId = #{userId}
+	</select>
+	<select id="getGoodsInfoByGoodsPrice" resultMap="GoodsMapper"
+		parameterType="String">
+		select * from goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 order by goods.GoodsOriginalPrice
+		<if test="desc=='yes'">
+			desc
+		</if>
+	</select>
+	<update id="addGoodsSalesVolume" parameterType="map">
+		update goods set
+		GoodsSalesVolume=#{goodsSalesVolume} where
+		goodsId=#{goodsId}
+	</update>
+	<select id="GetgoodsByVolumeLimit12" resultMap="GoodsMapper">
+		select * from
+		goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId
+		and shops.ShopState =1 order by goods.GoodsSalesVolume
+		desc limit 12 desc
+	</select>
+	<!-- 用于跳转，sesson搜索 默认升序 小到大 -->
+	<select id="getGoodsInfoByGoodsTypeId" parameterType="map"
+		resultMap="GoodsMapper">
+		select * from goods,shops where GoodsState in(1,3) and goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1
+		<if test="goodsTypeId != null">
+		 and goods.GoodsTypeId = #{goodsTypeId}
+		</if>
+		<if test="GoodsTypeName != null">
+		 and goods.GoodsName like '%${GoodsTypeName}%'
+		</if>
+		<if test="priceDesc == 'yes'"> <!-- 价格 低到高 -->
+			order by goods.GoodsOriginalPrice
+		</if>
+		<if test="priceDesc == 'no'"> <!-- 价格 高到低 -->
+			order by goods.GoodsOriginalPrice desc
+		</if>
+		<if test="goodsVolume == 'yes'"> <!-- 销量 低到高 -->
+			order by goods.GoodsSalesVolume
+		</if>
+		<if test="goodsVolume == 'no'"> <!-- 销量 高到低 -->
+			order by goods.GoodsSalesVolume desc
+		</if>
+		<if test="goodsDis=='yes'"><!-- 折扣力度 高到低 -->
+		and goods.GoodsDiscount !=1 order by goods.GoodsDiscount
+		</if>
+		<if test="goodsDis=='no'"> <!-- 折扣力度 低到高 -->
+		and goods.GoodsDiscount !=1 order by goods.GoodsDiscount desc
+		</if>
+	</select>
+	<!-- 欧武淼 go -->
+	<insert id="AddGoodsByShops"
+		parameterType="com.cappuccino.pojo.Goods">
+		insert into
+		Goods(goodsName,goodsImg,goodsImgIntroduce,GoodsTestIntroduce,GoodsOriginalPrice,GoodsDiscount,GoodsTypeId,ShopsId,GoodsTime,GoodsModel,GoodsState,GoodsColor)
+		values(#{goodsName},#{goodsImg},#{goodsImgIntroduce},#{goodsTestIntroduce},#{goodsOriginalPrice},#{goodsDiscount},#{goodsTypeId},#{shopsId},#{goodsTime},#{goodsModel},5,#{goodsColor})
+	</insert>
+	<update id="UpdateByGoodsId" parameterType="String">
+		update Goods set
+		GoodsState=2 where goodsId=#{goodsId}
+	</update>
+	<!-- 欧武淼 end -->
+</mapper>

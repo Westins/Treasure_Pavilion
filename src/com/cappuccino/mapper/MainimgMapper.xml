@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.MainimgMapper">
+	<resultMap type="com.cappuccino.pojo.Mainimg"
+		id="MainImgMapper">
+		<id column="main_goodsId" property="mainImgId" />
+		<result column="MainTest" property="mainTest" />
+		<result column="MainImg" property="mainImg" />
+		 <association property="goods"
+			javaType="com.cappuccino.pojo.Goods">
+			<id property="goodsId" column="goodsId" />
+			<result property="goodsTypeId" column="goodsTypeId" />
+			<result property="shopsId" column="shopsId" />
+			<result property="goodsName" column="goodsName" />
+			<result property="goodsImgIntroduce" column="goodsImgIntroduce" />
+			<result property="goodsVideoIntroduce" column="goodsVideoIntroduce" />
+			<result property="goodsTestIntroduce" column="goodsTestIntroduce" />
+			<result property="goodsSalesVolume" column="goodsSalesVolume" />
+			<result property="goodsModel" column="goodsModel" />
+			<result property="goodsState" column="goodsState" />
+			<result property="goodsOriginalPrice" column="goodsOriginalPrice" />
+			<result property="goodsDiscount" column="goodsDiscount" />
+			<result property="goodsTime" column="goodsTime" />
+		</association>
+	</resultMap>
+	<select id="getMainImg" resultMap="MainImgMapper">
+		SELECT mainimg.GoodsId as main_goodsId,mainimg.*,goods.* FROM mainimg,goods WHERE MainImg.GoodsId = goods.GoodsId
+	</select>
+</mapper>

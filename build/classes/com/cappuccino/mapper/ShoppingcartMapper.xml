@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.ShoppingcartMapper">
+	<!-- 单威 go -->
+	<resultMap type="com.cappuccino.pojo.Shoppingcart"
+		id="ShoppingcartMapper">
+		<id column="shoppingCartld" property="shoppingCartld" />
+		<result column="goodsId" property="goodsId" />
+		<result column="shoppingCartNum" property="shoppingCartNum" />
+		<result column="userId" property="userId" />
+		<result column="shoppingCartState" property="shoppingCartState" />
+		<result column="shoppingCartModel" property="shoppingCartModel" />
+		<collection property="goods" select="getGoodsInfoByGoodsId"
+			ofType="com.cappuccino.pojo.Goods" column="goodsId"></collection>
+	</resultMap>
+	<resultMap type="com.cappuccino.pojo.Goods" id="GoodsMapper">
+		<id column="goodsId" property="goodsId" />
+		<result column="goodsTypeId" property="goodsTypeId" />
+		<result column="shopsId" property="shopsId" />
+		<result column="goodsSalesVolume" property="goodsSalesVolume" />
+		<result column="goodsName" property="goodsName" />
+		<result column="goodsImgIntroduce" property="goodsImgIntroduce" />
+		<result column="goodsVideoIntroduce"
+			property="goodsVideoIntroduce" />
+		<result column="goodsTestIntroduce"
+			property="goodsTestIntroduce" />
+		<result column="goodsModel" property="goodsModel" />
+		<result column="goodsState" property="goodsState" />
+		<result column="goodsImg" property="goodsImg" />
+		<result column="goodsOriginalPrice"
+			property="goodsOriginalPrice" />
+		<result column="goodsDiscount" property="goodsDiscount" />
+		<result column="goodsTime" property="goodsTime" />
+		<result column="goodsColor" property="goodsColor" />
+		<result column="goodsTypeId" property="goodsTypeId" />
+		<collection property="shops" select="getShopInfoByShopId"
+			ofType="com.cappuccino.pojo.Shops" column="shopsId"></collection>
+	</resultMap>
+	<resultMap type="com.cappuccino.pojo.Shops" id="ShopsMapper"></resultMap>
+	<!-- 单威 end -->
+
+	<!-- 单威 go -->
+	<select id="getShoppingCatByUserId"
+		resultMap="ShoppingcartMapper">
+		select * from shoppingcart,goods,shops where shoppingcart.GoodsId =
+		goods.GoodsId and shops.ShopsId = goods.ShopsId and shops.ShopState=1
+		and goods.GoodsState in(1,3)
+		<if test="userId != 0">
+			and shoppingcart.UserId = #{userId}
+		</if>
+		<if test="ordersId != 0">
+			and shoppingcart.ShoppingCartld = #{ordersId}
+		</if>
+	</select>
+	<select id="getShoppingCartByCarId" parameterType="int"
+		resultType="com.cappuccino.pojo.Shoppingcart">
+		select * from shoppingcart,goods,shops where shoppingcart.GoodsId =
+		goods.GoodsId and shops.ShopsId = goods.ShopsId and shops.ShopState=1
+		and goods.GoodsState in(1,3) and shoppingCartld = #{carId}
+	</select>
+	<select id="getGoodsInfoByGoodsId" parameterType="int"
+		resultMap="GoodsMapper">
+		select * from goods,shops where GoodsState in(1,3) and
+		goods.ShopsId =
+		shops.ShopsId and shops.ShopState =1 and goodsId =
+		#{goodsId}
+	</select>
+	<select id="getShopInfoByShopId" parameterType="int"
+		resultType="com.cappuccino.pojo.Shops">
+		select * from shops where ShopState=1 and shopsId =
+		#{shopsId}
+	</select>
+	<update id="updateShoppingCartGoodsNumByCareId"
+		parameterType="map">
+		update shoppingcart set ShoppingCartNum = #{goodsNum}
+		where ShoppingCartld =
+		#{shoppingCartld}
+	</update>
+	<delete id="deleteShoppingCartGoodsNumByCareId"
+		parameterType="int">
+		delete from shoppingcart where ShoppingCartld =
+		#{shoppingCartld}
+	</delete>
+	<insert id="addShoppingCart"
+		parameterType="com.cappuccino.pojo.Shoppingcart">
+		insert into
+		shoppingcart(ShoppingCartld,GoodsId,ShoppingCartNum,ShoppingCartModel,UserId,ShoppingCartState,ShoppingCartColor)
+		values(0,#{goodsId},#{shoppingCartNum},#{shoppingCartModel},#{userId},#{shoppingCartState},#{shoppingCartColor})
+	</insert>
+	<select id="selectShoppingCartByShopCart"
+		parameterType="com.cappuccino.pojo.Shoppingcart"
+		resultType="com.cappuccino.pojo.Shoppingcart">
+		select * from shoppingcart where goodsId=#{goodsId} and
+		shoppingcartmodel=#{shoppingCartModel} and
+		ShoppingCartColor=#{shoppingCartColor} and userId=#{userId}
+	</select>
+	<!-- 单威 end -->
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.GoodsReviewMapper">
+	<resultMap type="com.cappuccino.pojo.Goodsreview"
+		id="GoodsReviewMapper">
+		<id column="GoodsReviewId" property="goodsReviewId" />
+		<result column="GoodsReviewTest" property="goodsReviewTest" />
+		<result column="GoodsReviewImg" property="goodsReviewImg" />
+		<result column="GoodsReviewVideo" property="goodsReviewVideo" />
+		<result column="GoodsReviewRated" property="goodsReviewRated" />
+		<result column="UserId" property="userId" />
+		<result column="GoodsId" property="goodsId" />
+	</resultMap>
+	<insert id="userAddGoodsReview"
+		parameterType="com.cappuccino.pojo.Goodsreview">
+		insert into
+		goodsreview(goodsReviewTest,goodsReviewImg,goodsReviewVideo,goodsReviewRated,userId,goodsId)
+		values(#{goodsReviewTest},#{goodsReviewImg},#{goodsReviewVideo},#{goodsReviewRated},#{userId},#{goodsId})
+	</insert>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.GoodstypeMapper">
+    <resultMap type="com.cappuccino.pojo.Goodstype" id="GoodstypeMapper">
+		<id column="goodTypeId" property="goodTypeId" />
+		<result column="goodsTypeName" property="goodsTypeName" />
+		<collection property="goodstypes" select="getTypesByTypeId"
+			ofType="com.cappuccino.pojo.Goodstypes" column="goodTypeId"></collection>
+	</resultMap>
+	<select id="getGoodsType_all" resultMap="GoodstypeMapper">
+	select * from goodstype
+	</select>
+	<select id="getAllType" resultMap="GoodstypeMapper">
+	select * from goodstype
+	</select>
+	<select id="getTypesByTypeId" parameterType="int" resultType="com.cappuccino.pojo.Goodstypes">
+	select * from goodstypes where goodstypeId = #{goodTypeId}
+	</select>
+</mapper>

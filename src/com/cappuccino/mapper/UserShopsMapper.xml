@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cappuccino.dao.UserShopsMapper">
+   <!-- 欧武淼 GO -->
+	<resultMap type="com.cappuccino.pojo.Usershops"
+		id="UsershopsMapper">
+		<id column="userShopsId" property="userShopsId" />
+		<result column="userId" property="userId" />
+		<result column="shopsId" property="shopsId" />
+		<collection property="shops"
+			select="getUserShopsInfoByUserId" ofType="com.cappuccino.pojo.Shops"
+			column="shopsId" />
+	</resultMap>
+	<!-- 欧武淼 END -->
+	
+	<!-- 欧武淼 GO -->
+	<select id="getUserShopsInfoAll" resultMap="UsershopsMapper"
+		parameterType="int">
+		select * from usershops where UserId = #{userId}
+	</select>
+	<select id="getUserShopsInfoByUserId" parameterType="int"
+		resultType="com.cappuccino.pojo.Shops">
+		select * from shops where ShopState=1 and ShopsId = #{ShopsId}
+	</select>
+	<!-- 欧武淼 END -->
+	<!-- 单威 GO -->
+	<delete id="deleteUserShops" parameterType="int">
+	delete from usershops where UserShopsId = #{userShopsId}
+	</delete>
+	<insert id="addUserShops" parameterType="com.cappuccino.pojo.Usershops">
+	insert into usershops(shopsId,UserId) values(#{shopsId},#{userId})
+	</insert>
+	<select id="selectUserShopsByShopsIdAndUserId" parameterType="com.cappuccino.pojo.Usershops" resultMap="UsershopsMapper">
+	select * from usershops where shopsId =#{shopsId} and userId=#{userId}
+	</select>
+	<!-- 单威END -->
+</mapper>
